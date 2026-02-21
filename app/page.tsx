@@ -1,65 +1,238 @@
-import Image from "next/image";
+import { useMemo } from 'react'
 
+type Status = 'Scheduled' | 'Completed' | 'Cancelled' | 'No-Show'
+
+interface Appointment {
+  id: string
+  customerName: string
+  service: string
+  staff: string
+  datetime: string
+  status: Status
+}
+
+const appointments: Appointment[] = [
+  {
+    id: '1',
+    customerName: 'John Doe',
+    service: 'Consultation',
+    staff: 'Riya',
+    datetime: '2026-02-21T09:30:00Z',
+    status: 'Scheduled',
+  },
+  {
+    id: '2',
+    customerName: 'Sara Khan',
+    service: 'Check-up',
+    staff: 'Farhan',
+    datetime: '2026-02-21T10:00:00Z',
+    status: 'Completed',
+  },
+  {
+    id: '3',
+    customerName: 'Michael Smith',
+    service: 'Consultation',
+    staff: 'Riya',
+    datetime: '2026-02-21T11:00:00Z',
+    status: 'Completed',
+  },
+  {
+    id: '4',
+    customerName: 'Emma Wilson',
+    service: 'Support Session',
+    staff: 'Alex',
+    datetime: '2026-02-21T11:30:00Z',
+    status: 'Scheduled',
+  },
+  {
+    id: '5',
+    customerName: 'Daniel Lee',
+    service: 'Consultation',
+    staff: 'Farhan',
+    datetime: '2026-02-21T12:00:00Z',
+    status: 'Cancelled',
+  },
+  {
+    id: '6',
+    customerName: 'Olivia Brown',
+    service: 'Check-up',
+    staff: 'Riya',
+    datetime: '2026-02-21T13:00:00Z',
+    status: 'Scheduled',
+  },
+  {
+    id: '7',
+    customerName: 'James Taylor',
+    service: 'Support Session',
+    staff: 'Alex',
+    datetime: '2026-02-21T14:00:00Z',
+    status: 'Completed',
+  },
+  {
+    id: '8',
+    customerName: 'Sophia Davis',
+    service: 'Consultation',
+    staff: 'Farhan',
+    datetime: '2026-02-21T15:00:00Z',
+    status: 'No-Show',
+  },
+  {
+    id: '9',
+    customerName: 'Liam Johnson',
+    service: 'Check-up',
+    staff: 'Riya',
+    datetime: '2026-02-21T16:00:00Z',
+    status: 'Scheduled',
+  },
+  {
+    id: '10',
+    customerName: 'Isabella Martinez',
+    service: 'Consultation',
+    staff: 'Alex',
+    datetime: '2026-02-21T17:00:00Z',
+    status: 'Completed',
+  },
+]
+
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'UTC',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(date))
+}
+
+function StatusBadge({ status }: { status: Status }) {
+  const base = 'rounded-full px-3 py-1 text-xs font-medium'
+
+  const styles: Record<Status, string> = {
+    Scheduled: 'bg-gray-100 text-gray-800',
+    Completed: 'bg-black text-white',
+    Cancelled: 'bg-red-100 text-red-700',
+    'No-Show': 'bg-yellow-100 text-yellow-700',
+  }
+
+  return <span className={`${base} ${styles[status]}`}>{status}</span>
+}
 export default function Home() {
+ const totalToday = appointments.length
+
+  const completed = useMemo(
+    () => appointments.filter((a) => a.status === 'Completed').length,
+    []
+  )
+
+  const pending = useMemo(
+    () =>
+      appointments.filter(
+        (a) => a.status === 'Scheduled'
+      ).length,
+    []
+  )
+
+  const queueCount = 3 // Dummy queue number
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="flex min-h-screen items-center justify-center text-black text-4xl font-bold">
+        <div className="space-y-10">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Dashboard
+        </h1>
+        <p className="text-sm text-gray-500">
+          Today’s operational overview
+        </p>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <p className="text-sm text-gray-500">
+            Total Appointments Today
+          </p>
+          <p className="mt-2 text-3xl font-bold">
+            {totalToday}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <p className="text-sm text-gray-500">
+            Completed vs Pending
+          </p>
+
+          <div className="mt-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Completed</span>
+              <span className="font-medium">{completed}</span>
+            </div>
+
+            <div className="h-2 w-full rounded-full bg-gray-100">
+              <div
+                className="h-2 rounded-full bg-black"
+                style={{
+                  width: `${(completed / totalToday) * 100}%`,
+                }}
+              />
+            </div>
+
+            <div className="flex justify-between text-sm">
+              <span>Pending</span>
+              <span className="font-medium">{pending}</span>
+            </div>
+          </div>
         </div>
-      </main>
+
+        <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <p className="text-sm text-gray-500">
+            Waiting Queue
+          </p>
+          <p className="mt-2 text-3xl font-bold">
+            {queueCount}
+          </p>
+        </div>
+      </div>
+
+      {/* Appointment Table */}
+      <div className="rounded-2xl border bg-white shadow-sm">
+        <div className="border-b px-6 py-4">
+          <h2 className="text-lg font-semibold">
+            Today’s Appointments
+          </h2>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-gray-50 text-gray-600">
+              <tr>
+                <th className="px-6 py-3">Customer</th>
+                <th className="px-6 py-3">Service</th>
+                <th className="px-6 py-3">Staff</th>
+                <th className="px-6 py-3">Date & Time</th>
+                <th className="px-6 py-3">Status</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y">
+              {appointments.map((a) => (
+                <tr key={a.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 font-medium">
+                    {a.customerName}
+                  </td>
+                  <td className="px-6 py-4">{a.service}</td>
+                  <td className="px-6 py-4">{a.staff}</td>
+                  <td className="px-6 py-4">
+                    {formatDate(a.datetime)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <StatusBadge status={a.status} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  );
+    </main>
+  )
 }
